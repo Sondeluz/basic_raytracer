@@ -1,15 +1,26 @@
-use std::{thread, time};
-
 mod color;
 mod point;
 mod ray;
 mod vector;
+mod hittable;
+mod sphere;
+
+use std::{thread, time};
+use crate::point::Point;
+use crate::sphere::Sphere;
+use crate::hittable::Hittable;
 
 fn main() {
     // Image
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = (image_width as f64 / aspect_ratio) as i64;
+
+    // Objects
+    let mut objects : Vec<Box<dyn Hittable>> = Vec::new();
+    objects.push(Box::new(Sphere{center:Point{x:0.0,y:0.0,z:-1.0}, radius:0.5})); // Center
+    //objects.push(Box::new(Sphere{center:Point{x:0.6,y:0.2,z:-1.0}, radius:0.3})); // Smaller, overlapping
+    objects.push(Box::new(Sphere{center:Point{x:0.0,y:-100.5,z:-1.0}, radius:100.0})); // Bigger
 
     // Camera setup
     let viewport_height = 2.0;
@@ -60,7 +71,7 @@ fn main() {
                 dir: lower_left_corner + (horizontal * u) + (vertical * v) - origin,
             };
 
-            r.ray_color().write_color();
+            r.ray_color(&objects).write_color();
         }
     }
 
