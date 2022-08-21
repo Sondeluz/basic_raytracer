@@ -1,4 +1,7 @@
+use crate::utils::*;
+
 use std::ops;
+use rand::rngs::ThreadRng;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Vec3 {
@@ -8,6 +11,53 @@ pub struct Vec3 {
 }
 
 impl Vec3 {
+    pub fn random_vector(rng : &mut ThreadRng) -> Vec3 {
+
+        return Vec3 {
+            x: random_f64(rng),
+            y: random_f64(rng),
+            z: random_f64(rng),
+        }
+    }
+
+    pub fn random_unit_vector(rng : &mut ThreadRng) -> Vec3 {
+        // By picking random points in the unit sphere and then normalizing those we get
+        // a random point on the unit sphere. This creates a Lambertian distribution where
+        // the probability of ray scattering close to the normal is higher, but the distribution
+        // is more uniform
+        Vec3::unit_vector(&Vec3::random_vector_in_unit_sphere(rng))
+    }
+
+    pub fn random_vector_bounded(rng : &mut ThreadRng, min: f64, max: f64) -> Vec3 {
+        return Vec3 {
+            x: random_f64_bounded(rng, min, max),
+            y: random_f64_bounded(rng, min, max),
+            z: random_f64_bounded(rng, min, max),
+        }
+    }
+
+    // Get a random vector located inside a sphere of radius 1
+    pub fn random_vector_in_unit_sphere(rng : &mut ThreadRng) -> Vec3 {
+        loop {
+            let v = Vec3::random_vector_bounded(rng, -1.0, 1.0);
+            
+            if v.length_squared() < 1.0 {
+                return v
+            }
+        }
+    }
+
+    // Alternative diffuse method where the scatter direction is any angle away from the hit point
+    pub fn random_vector_in_hemisphere(rng : &mut ThreadRng, normal : &Vec3) -> Vec3 {
+        let in_unit_sphere = Vec3::random_vector_in_unit_sphere(rng);
+        
+        if Vec3::dot(&in_unit_sphere, normal) > 0.0 { // In the same hemisphere as the normal
+            return in_unit_sphere;
+        } else{
+            return -in_unit_sphere;
+        }
+    }
+
     pub fn dot(&self, rhs: &Vec3) -> f64 {
         self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
     }
@@ -108,6 +158,12 @@ impl ops::AddAssign<f64> for Vec3 {
         self.x += rhs;
         self.y += rhs;
         self.z += rhs;
+    }
+}
+
+impl ops::AddAssign<Vec3> for Vec3 {
+    fn add_assign(&mut self, rhs: Vec3) {
+        *self = *self + rhs
     }
 }
 
