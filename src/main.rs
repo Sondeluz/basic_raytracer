@@ -30,6 +30,12 @@ fn main() {
     objects.push(Box::new(Sphere{center:Point{x:0.0,y:0.0,z:-1.0}, radius:0.5})); // Center
     objects.push(Box::new(Sphere{center:Point{x:0.0,y:-100.5,z:-1.0}, radius:100.0})); // Bigger
 
+    // Objects
+    let mut objects : Vec<Box<dyn Hittable>> = Vec::new();
+    objects.push(Box::new(Sphere{center:Point{x:0.0,y:0.0,z:-1.0}, radius:0.5})); // Center
+    //objects.push(Box::new(Sphere{center:Point{x:0.6,y:0.2,z:-1.0}, radius:0.3})); // Smaller, overlapping
+    objects.push(Box::new(Sphere{center:Point{x:0.0,y:-100.5,z:-1.0}, radius:100.0})); // Bigger
+
     // Camera setup
     let camera = camera::new();
 
@@ -49,7 +55,6 @@ fn main() {
                 let u = (i as f64 + utils::random_f64(&mut rng)) / (image_width - 1) as f64;
                 let v = (j as f64 + utils::random_f64(&mut rng)) / (image_height - 1) as f64;
                 
-
                 let r = camera.get_ray(u, v);
                 pixel_color += r.ray_color(&mut rng, &objects, MAX_RAY_BOUNCES);
             }
