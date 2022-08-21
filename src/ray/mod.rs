@@ -45,6 +45,21 @@ impl Ray {
         let (hits, hit_record) = self.hits_any_object(objects, 0.001, f64::INFINITY); 
 
         if hits {
+            if let Some(ref material) = hit_record.material {
+                let (attenuation, scattered, scatters) =  material.scatter(rng, self, &hit_record);
+                    
+                if scatters {
+                    return scattered.ray_color(rng, objects, allowed_bounces_remaining-1) * attenuation;
+                } else {
+                    return Color{x:0.0,y:0.0,z:0.0};
+                }
+            } else {
+                panic!("No material provided for a scene object");
+            }
+
+            /*
+
+
             let target = hit_record.p + hit_record.normal + Vec3::random_unit_vector(rng);//Vec3::random_vector_in_hemisphere(rng, &hit_record.normal);
             
             let ray = Ray {
@@ -54,6 +69,8 @@ impl Ray {
             };
 
             return ray.ray_color(rng, objects, allowed_bounces_remaining-1) * 0.5;
+
+            */
         }
 
         /*

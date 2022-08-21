@@ -6,12 +6,17 @@ mod hittable;
 mod sphere;
 mod camera;
 mod utils;
+mod material;
 
 use crate::point::Point;
 use crate::sphere::Sphere;
 use crate::hittable::Hittable;
+use crate::color::Color;
+use crate::material::lambertian::Lambertian;
+use crate::material::metallic::Metallic;
 
 use std::time::{Instant};
+use std::rc::Rc;
 
 const MAX_RAY_BOUNCES : usize = 50;
 
@@ -27,8 +32,32 @@ fn main() {
 
     // Objects
     let mut objects : Vec<Box<dyn Hittable>> = Vec::new();
-    objects.push(Box::new(Sphere{center:Point{x:0.0,y:0.0,z:-1.0}, radius:0.5})); // Center
-    objects.push(Box::new(Sphere{center:Point{x:0.0,y:-100.5,z:-1.0}, radius:100.0})); // Bigger
+
+
+    let material_ground = Rc::new(Lambertian{albedo: Color{x:0.8, y:0.8, z:0.0}});
+    let material_center = Rc::new(Lambertian{albedo: Color{x:0.7, y:0.3, z:0.3}});
+    let material_left = Rc::new(Metallic{albedo: Color{x:0.8, y:0.8, z:0.8}, fuzz:0.6});
+    let material_right = Rc::new(Metallic{albedo: Color{x:0.4, y:0.1, z:0.2}, fuzz:0.0});
+
+    objects.push(Box::new(Sphere{
+        center:Point{x:0.0,y:-100.5,z:-1.0},   
+        radius:100.0, 
+        material: material_ground}));
+    
+    objects.push(Box::new(Sphere{
+        center:Point{x:0.0,y:0.0,z:-1.0},      
+        radius:0.5,     
+        material: material_center}));
+    
+    objects.push(Box::new(Sphere{
+        center:Point{x:-1.0,y:0.0,z:-1.0},     
+        radius:0.5, 
+        material: material_left}));
+    
+    objects.push(Box::new(Sphere{
+        center:Point{x:1.0,y:0.0,z:-1.0},      
+        radius:0.5, 
+        material: material_right}));
 
     // Camera setup
     let camera = camera::new();

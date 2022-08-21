@@ -1,10 +1,14 @@
 use crate::point::Point;
 use crate::vector::Vec3;
 use crate::ray::Ray;
+use crate::material::Material;
+
+use std::rc::Rc;
 
 pub struct HitRecord {
     pub p : Point,
     pub normal : Vec3,
+    pub material : Option<Rc<dyn Material>>,
     pub t : f64, // Closest hit point (result of solving the equation P(t)=A+tb)
     pub front_face : bool
 }
@@ -14,6 +18,7 @@ impl HitRecord {
         HitRecord {
             p:Vec3 { x: 0.0, y: 0.0, z: 0.0 },
             normal:Vec3 { x: 0.0, y: 0.0, z: 0.0 },
+            material:None,
             t: 0.0,
             front_face:false
         }

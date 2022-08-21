@@ -82,6 +82,16 @@ impl Vec3 {
     pub fn length_squared(&self) -> f64 {
         (self.x * self.x) + (self.y * self.y) + (self.z * self.z)
     }
+
+    pub fn near_zero(&self) -> bool {
+        let s = 1e-8;
+
+        (f64::abs(self.x) < s) && (f64::abs(self.y) < s) && (f64::abs(self.z) < s) 
+    }
+
+    pub fn reflect(&self, normal : &Vec3) -> Vec3 {
+        *self - (*normal*self.dot(normal))*2.0
+    }
 }
 
 impl ops::Index<usize> for Vec3 {
@@ -141,6 +151,18 @@ impl ops::Mul<f64> for Vec3 {
             x: self.x * rhs,
             y: self.y * rhs,
             z: self.z * rhs,
+        }
+    }
+}
+
+impl ops::Mul<Vec3> for Vec3 {
+    type Output = Self;
+
+    fn mul(self, rhs: Vec3) -> Self {
+        Vec3 {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+            z: self.z * rhs.z,
         }
     }
 }

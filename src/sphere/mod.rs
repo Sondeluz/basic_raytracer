@@ -3,11 +3,14 @@ use crate::hittable::HitRecord;
 use crate::ray::Ray;
 use crate::point::Point;
 use crate::vector::Vec3;
+use crate::material::Material;
 
+use std::rc::Rc;
 
 pub struct Sphere {
     pub center: Point,
-    pub radius: f64
+    pub radius: f64,
+    pub material: Rc<dyn Material>
 }
 
 
@@ -42,6 +45,7 @@ impl Hittable for Sphere {
             hr.t = root;
             hr.p = ray.at(hr.t);
             hr.normal = (hr.p - self.center) / self.radius; // Always points outward
+            hr.material = Some(self.material.clone());
             let outward_normal = hr.normal;
             hr.set_face_normal(ray, &outward_normal); // So we need to know whether the ray comes from inside or outside the sphere
             
