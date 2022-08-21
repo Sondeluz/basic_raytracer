@@ -30,12 +30,6 @@ fn main() {
     objects.push(Box::new(Sphere{center:Point{x:0.0,y:0.0,z:-1.0}, radius:0.5})); // Center
     objects.push(Box::new(Sphere{center:Point{x:0.0,y:-100.5,z:-1.0}, radius:100.0})); // Bigger
 
-    // Objects
-    let mut objects : Vec<Box<dyn Hittable>> = Vec::new();
-    objects.push(Box::new(Sphere{center:Point{x:0.0,y:0.0,z:-1.0}, radius:0.5})); // Center
-    //objects.push(Box::new(Sphere{center:Point{x:0.6,y:0.2,z:-1.0}, radius:0.3})); // Smaller, overlapping
-    objects.push(Box::new(Sphere{center:Point{x:0.0,y:-100.5,z:-1.0}, radius:100.0})); // Bigger
-
     // Camera setup
     let camera = camera::new();
 
